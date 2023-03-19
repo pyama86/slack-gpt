@@ -6,6 +6,7 @@ export const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   logLevel: LogLevel.INFO,
+  socketMode: true,
   customRoutes: [
     {
       path: '/health-check',
@@ -17,3 +18,28 @@ export const app = new App({
     },
   ],
 });
+
+app.message('pyamatest', async ({ message, say }) => {
+  // イベントがトリガーされたチャンネルに say() でメッセージを送信します
+  await say({
+    blocks: [
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": `Hey there <@${message.user}>!`
+        },
+        "accessory": {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "Click Me"
+          },
+          "action_id": "button_click"
+        }
+      }
+    ],
+    text: `Hey there <@${message.user}>!`
+  });
+});
+
