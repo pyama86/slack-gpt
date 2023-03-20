@@ -1,6 +1,6 @@
 import { app } from '../bolt/bolt'
 
-import { Configuration, OpenAIApi } from "openai";
+import { Configuration, OpenAIApi, ChatCompletionRequestMessage } from "openai";
 import * as dotenv from "dotenv";
 
 const configuration = new Configuration({
@@ -8,10 +8,10 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-export async function ask(content: string, model = "gpt-3.5-turbo-0301") {
+export async function ask(messages: ChatCompletionRequestMessage[], model = "gpt-3.5-turbo-0301") {
   const response = await openai.createChatCompletion({
     model: model,
-    messages: [{ role: "user", content: content }],
+    messages: messages,
   });
 
   return response.data.choices[0].message?.content;
@@ -42,7 +42,11 @@ export default function() {
 
     txt = txt + "について教えて"
     logger.info("query keyword:", txt)
-    const result = await ask(txt);
+    const result = await ask([{
+        role: 'user',
+        content: txt,
+    }]);
+
     const blocks: any[] = [];
 
     blocks.push (
