@@ -42,7 +42,12 @@ export default function() {
 
     txt = txt + "について教えて"
     logger.info("query keyword:", txt)
-    const result = await ask([{
+    const result = await ask([
+    {
+        role: 'user',
+        content: "これから質問をします。わからないときはわからないと答えてください",
+    },
+    {
         role: 'user',
         content: txt,
     }]);

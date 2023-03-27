@@ -37,13 +37,17 @@ app.event('app_mention', async ({ event, client, say }) => {
       return;
     }
 
+    const preContext = [{
+      role: 'user',
+      content: 'これから質問をします。わからないときはわからないと答えてください',
+    }]
     const threadMessages = replies.messages.map((message) => {
       return {
         role: message.user === botUserId ? 'assistant' : 'user',
         content: (message.text || '').replace(`<@${botUserId}>`, ''),
       };
     });
-    const gptAnswerText = await ask(threadMessages);
+    const gptAnswerText = await ask(Object.assign(preContext, threadMessages));
 
     /* スレッドに返信 */
     await say({
