@@ -8,7 +8,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-export async function ask(messages: ChatCompletionRequestMessage[], model = "gpt-3.5-turbo-0301") {
+export async function ask(messages: ChatCompletionRequestMessage[], model = "gpt-4") {
   const response = await openai.createChatCompletion({
     model: model,
     messages: messages,
