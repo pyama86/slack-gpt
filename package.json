@@ -11,8 +11,8 @@
   "author": "pyama <pyama@pepabo.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^18.15.3",
-    "nodemon": "^2.0.21",
+    "@types/node": "^18.15.11",
+    "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.2"
   },
