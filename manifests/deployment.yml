@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slack-gpt
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: slack-gpt
+  template:
+    metadata:
+      labels:
+        name: slack-gpt
+    spec:
+      containers:
+      - name: slack-gpt
+        imagePullPolicy: Always
+        image: ghcr.io/pyama86/slack-gpt:sha-de66c25
+        ports:
+        - containerPort: 3000
+        livenessProbe:
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          tcpSocket:
+            port: 3000
+        readinessProbe:
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          tcpSocket:
+            port: 3000
+        env:
+          - name: SLACK_BOT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: slack-gpt
+                key: slack-bot-token
+          - name: SLACK_SIGNING_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: slack-gpt
+                key: slack-signing-secret
+          - name: OPENAI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: slack-gpt
+                key: openai-secret
+          - name: LANG
+            value: C.UTF-8
+          - name: BOT_USER_ID
+            value: your-slack-bot-id

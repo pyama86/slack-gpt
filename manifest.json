@@ -1,0 +1,46 @@
+{
+    "display_information": {
+        "name": "slack-gpt"
+    },
+    "features": {
+        "bot_user": {
+            "display_name": "slack-gpt",
+            "always_online": false
+        },
+        "shortcuts": [
+            {
+                "name": "GPTに聞いてみる",
+                "type": "message",
+                "callback_id": "query",
+                "description": "Slackの発言を元にGPTに聞いてみます"
+            }
+        ]
+    },
+    "oauth_config": {
+        "scopes": {
+            "bot": [
+                "channels:history",
+                "channels:read",
+                "chat:write",
+                "chat:write.public",
+                "commands",
+                "app_mentions:read"
+            ]
+        }
+    },
+    "settings": {
+        "event_subscriptions": {
+            "request_url": "https://example.com/slack/events",
+            "bot_events": [
+                "app_mention"
+            ]
+        },
+        "interactivity": {
+            "is_enabled": true,
+            "request_url": "https://example.com/slack/events"
+        },
+        "org_deploy_enabled": false,
+        "socket_mode_enabled": false,
+        "token_rotation_enabled": false
+    }
+}
