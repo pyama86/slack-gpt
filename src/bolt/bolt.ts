@@ -37,8 +37,9 @@ app.event('app_mention', async ({ event, client, say }) => {
       return;
     }
 
+    const waitingMessage = "GPTに聞いています。しばらくお待ち下さい";
     await say({
-      text: "GPTに聞いています。しばらくお待ち下さい",
+      text: waitingMessage,
       thread_ts: event.ts,
     });
 
@@ -46,12 +47,21 @@ app.event('app_mention', async ({ event, client, say }) => {
       role: 'user',
       content: 'これから質問をします。わからないときはわからないと答えてください',
     }]
+
+
+    const nonNullable = <T>(value: T): value is NonNullable<T> => value != null;
     const threadMessages = replies.messages.map((message) => {
+      if (message.text.includes(waitingMessage)) {
+        return;
+      }
+
       return {
         role: message.user === botUserId ? 'assistant' : 'user',
         content: (message.text || '').replace(`<@${botUserId}>`, ''),
       };
-    });
+    }).filter(nonNullable);
+
+
     const gptAnswerText = await ask(Object.assign(preContext, threadMessages));
 
     /* スレッドに返信 */
