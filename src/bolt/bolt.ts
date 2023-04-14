@@ -37,6 +37,11 @@ app.event('app_mention', async ({ event, client, say }) => {
       return;
     }
 
+    await say({
+      text: "GPTに聞いています。しばらくお待ち下さい",
+      thread_ts: event.ts,
+    });
+
     const preContext = [{
       role: 'user',
       content: 'これから質問をします。わからないときはわからないと答えてください',
