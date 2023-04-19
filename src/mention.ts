@@ -18,7 +18,7 @@ export const appMention: any = async ({ event, client, say }) => {
       return
     }
 
-    const waitingMessage = 'GPTに聞いています。しばらくお待ち下さい'
+    const waitingMessage = 'GPTに聞いています。しばらくお待ち下さい。なお、お礼を述べるのも有料の場合があるので、お気持ちだけで結構です。'
     await say({
       text: waitingMessage,
       thread_ts: event.ts
@@ -32,6 +32,10 @@ export const appMention: any = async ({ event, client, say }) => {
     const nonNullable = <T>(value: T): value is NonNullable<T> => value != null
     const threadMessages = replies.messages.map((message) => {
       if (message.text.includes(waitingMessage)) {
+        return null
+      }
+
+      if (message.user !== botUserId && !message.text.includes(`<@${botUserId}>`)) {
         return null
       }
 

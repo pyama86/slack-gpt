@@ -53,7 +53,7 @@ describe('appMention', () => {
 
     expect(mockSay).toHaveBeenCalledTimes(2)
     expect(mockSay).toHaveBeenNthCalledWith(1, {
-      text: 'GPTに聞いています。しばらくお待ち下さい',
+      text: 'GPTに聞いています。しばらくお待ち下さい。なお、お礼を述べるのも有料の場合があるので、お気持ちだけで結構です。',
       thread_ts: 'test_ts'
     })
     expect(mockSay).toHaveBeenNthCalledWith(2, {
