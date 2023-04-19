@@ -5,7 +5,7 @@ jest.mock('openai')
 
 describe('ask function', () => {
   const messages: ChatCompletionRequestMessage[] = [
-    { role: 'system', content: 'You are a helpful assistant.' },
+    { role: 'assistant', content: 'You are a helpful assistant.' },
     { role: 'user', content: 'What is the capital of France?' }
   ]
 

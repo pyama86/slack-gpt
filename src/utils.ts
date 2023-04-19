@@ -1,19 +1,21 @@
-import { Configuration, OpenAIApi, ChatCompletionRequestMessage } from 'openai'
-import { contains_tokens } from 'tiktoken'
+import { Configuration, OpenAIApi, ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum } from 'openai'
+import { encoding_for_model } from '@dqbd/tiktoken'
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY
 })
 const openai = new OpenAIApi(configuration)
 const MAX_TOKENS = 8192
-
 async function getNumberOfTokens (messages: ChatCompletionRequestMessage[]): Promise<number> {
-  const tokens = []
+  let length = 0
+  const encoding = encoding_for_model('gpt-4')
   for (const message of messages) {
-    for await (const token of contains_tokens(message.content)) {
-      tokens.push(token)
+    if (message.role === ChatCompletionRequestMessageRoleEnum.User) {
+      length += encoding.encode(message.content).length
     }
   }
-  return tokens.length
+  encoding.free()
+  return length
 }
 
 export async function ask (messages: ChatCompletionRequestMessage[], model = 'gpt-4') {
