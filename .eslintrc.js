@@ -18,5 +18,6 @@ module.exports = {
     'jest'
   ],
   rules: {
+    camelcase: 'off'
   }
 }

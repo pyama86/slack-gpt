@@ -32,6 +32,7 @@
     "typescript": "^5.0.2"
   },
   "scripts": {
+    "lint": "eslint src --ext .ts",
     "test": "jest",
     "start": "npm run build:live",
     "build": "tsc -p .",
