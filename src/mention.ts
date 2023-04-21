@@ -26,7 +26,7 @@ export const appMention: any = async ({ event, client, say }) => {
 
     const preContext = [{
       role: ChatCompletionRequestMessageRoleEnum.User,
-      content: 'これから質問をします。わからないときはわからないと答えてください'
+      content: 'これから質問をします。わからないときはわからないと答えてください。業務と関係なさそうであれば、解答の最後に、「この質問は業務と関係ないかもしれません」と追記してください。'
     }]
 
     const nonNullable = <T>(value: T): value is NonNullable<T> => value != null
