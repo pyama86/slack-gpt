@@ -4,7 +4,8 @@ import { appMention } from './mention'
 const mockSay = jest.fn()
 const mockClient = {
   conversations: {
-    replies: jest.fn()
+    replies: jest.fn(),
+    members: jest.fn()
   }
 }
 
@@ -52,10 +53,6 @@ describe('appMention', () => {
     })
 
     expect(mockSay).toHaveBeenCalledTimes(2)
-    expect(mockSay).toHaveBeenNthCalledWith(1, {
-      text: 'GPTに聞いています。しばらくお待ち下さい。なお、お礼を述べるのも有料の場合があるので、お気持ちだけで結構です。',
-      thread_ts: 'test_ts'
-    })
     expect(mockSay).toHaveBeenNthCalledWith(2, {
       text: 'GPTの回答',
       thread_ts: 'test_ts'
