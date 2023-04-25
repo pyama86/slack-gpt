@@ -32,3 +32,37 @@ export async function ask (messages: ChatCompletionRequestMessage[], model = 'gp
 
   return response.data.choices[0].message?.content
 }
+
+const NodeCache = require('node-cache')
+const cache = new NodeCache({ stdTTL: 3600 })
+
+export async function getUserList (client) {
+  const userList = cache.get('userList')
+  if (userList) {
+    return userList
+  }
+
+  let allUsers = []
+  let cursor = 0
+
+  try {
+    while (true) {
+      const result = await client.users.list({
+        limit: 1000,
+        cursor
+      })
+
+      allUsers = allUsers.concat(result.members)
+      if (result.response_metadata.next_cursor) {
+        cursor = result.response_metadata.next_cursor
+      } else {
+        break
+      }
+    }
+  } catch (error) {
+    console.error(`Error: ${error}`)
+    return null
+  }
+  cache.set('userList', allUsers)
+  return allUsers
+}
