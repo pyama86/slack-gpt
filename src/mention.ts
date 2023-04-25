@@ -13,7 +13,7 @@ async function getHumanMembersCount (client, channelId) {
     const users = await getUserList(client)
     for (const memberId of result.members) {
       const user = users.find(u => u.id === memberId)
-      if (!user.is_bot && user.name !== 'slackbot' && user.is_restricted !== true && user.is_ultra_restricted !== true) {
+      if (('is_bot' in user && !user.is_bot) && user.name !== 'slackbot' && user.is_restricted !== true && user.is_ultra_restricted !== true) {
         humanMembersCount += 1
       }
     }
