@@ -3,7 +3,7 @@ import { ChatCompletionRequestMessageRoleEnum } from 'openai'
 
 async function getHumanMembersCount (client, channelId) {
   try {
-    const result = await client.conversations.members({
+    const members = await client.conversations.members({
       channel: channelId,
       liimt: 200
     })
@@ -11,7 +11,7 @@ async function getHumanMembersCount (client, channelId) {
     let humanMembersCount = 0
 
     const users = await getUserList(client)
-    for (const memberId of result.members) {
+    for (const memberId of members.members) {
       const user = users.find(u => u.id === memberId)
       if (('is_bot' in user && !user.is_bot) && user.name !== 'slackbot' && user.is_restricted !== true && user.is_ultra_restricted !== true) {
         humanMembersCount += 1
@@ -36,13 +36,24 @@ export const appMention: any = async ({ event, client, say }) => {
     })
 
     const channel_member_count = await getHumanMembersCount(client, channelId)
+    const channelInfo = await client.conversations.info({
+      channel: channelId
+    })
 
     if (
-      channel_member_count > 0 &&
-      channel_member_count < 10
+      (
+        channel_member_count > 0 &&
+        channel_member_count < 10
+      ) ||
+      (
+        channelInfo.channel.name && (
+          channelInfo.channel.name.includes('times') ||
+          channelInfo.channel.name.includes('test')
+        )
+      )
     ) {
       say({
-        text: 'このチャンネルでの利用は非推奨のため、こっそり嘘を混ぜ始める可能性があります。',
+        text: 'このチャンネルでの利用は非推奨のため、そろそろ嘘を混ぜます',
         thread_ts: event.ts
       })
     }
