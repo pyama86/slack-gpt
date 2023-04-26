@@ -36,9 +36,14 @@ export const appMention: any = async ({ event, client, say }) => {
     })
 
     const channel_member_count = await getHumanMembersCount(client, channelId)
-    const channelInfo = await client.conversations.info({
-      channel: channelId
-    })
+    let channelInfo = null
+    try {
+      channelInfo = await client.conversations.info({
+        channel: channelId
+      })
+    } catch (error) {
+      console.error(`Error: ${error}`)
+    }
 
     if (
       (
@@ -46,6 +51,7 @@ export const appMention: any = async ({ event, client, say }) => {
         channel_member_count < 10
       ) ||
       (
+        channelInfo != null &&
         channelInfo.channel.name && (
           channelInfo.channel.name.includes('times') ||
           channelInfo.channel.name.includes('test')

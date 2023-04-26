@@ -5,7 +5,8 @@ const mockSay = jest.fn()
 const mockClient = {
   conversations: {
     replies: jest.fn(),
-    members: jest.fn()
+    members: jest.fn(),
+    info: jest.fn()
   }
 }
 
