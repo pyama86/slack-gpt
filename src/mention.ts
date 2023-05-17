@@ -72,12 +72,7 @@ export const appMention: any = async ({ event, client, say }) => {
       return
     }
 
-    const suggests = [
-      'なお、お礼を述べるのも有料の場合があるので、お気持ちだけで結構です。',
-      'なお、みんなの見ているチャンネルで使ったほうがコラボレーションが起きやすいので、timesとかDMでやらないほうがいいです。'
-    ]
-
-    const waitingMessage = 'GPTに聞いています。しばらくお待ち下さい。' + suggests[Math.floor(Math.random() * suggests.length)]
+    const waitingMessage = 'GPTに聞いています。しばらくお待ち下さい。'
     await say({
       text: waitingMessage,
       thread_ts: event.ts
