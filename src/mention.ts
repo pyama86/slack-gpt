@@ -108,5 +108,9 @@ export const appMention: any = async ({ event, client, say }) => {
     })
   } catch (error) {
     console.error(error)
+    await say({
+      text: 'なにかエラーが発生しました。開発者に連絡してください。error:' + error,
+      thread_ts: event.ts
+    })
   }
 }
