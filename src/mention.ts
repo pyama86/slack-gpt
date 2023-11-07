@@ -1,4 +1,4 @@
-import { ask, getUserList } from './utils'
+import { ask } from './utils'
 
 export const appMention: any = async ({ event, client, say }) => {
   const channelId = event.channel

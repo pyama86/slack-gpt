@@ -46,42 +46,8 @@ export async function ask (messages: ChatCompletionMessageParam[], model = 'gpt-
   const numberOfTokens = await getNumberOfTokens(messages)
 
   if (numberOfTokens > MaxTokens) {
-    return 'GPT-4の制限により、返答できませんでした。'
+    return 'GPTの制限により、返答できませんでした。'
   }
 
   return response.choices[0].message?.content
-}
-
-const NodeCache = require('node-cache')
-const cache = new NodeCache({ stdTTL: 3600 })
-
-export async function getUserList (client) {
-  const userList = cache.get('userList')
-  if (userList) {
-    return userList
-  }
-
-  let allUsers = []
-  let cursor = 0
-
-  try {
-    while (true) {
-      const result = await client.users.list({
-        limit: 1000,
-        cursor
-      })
-
-      allUsers = allUsers.concat(result.members)
-      if (result.response_metadata.next_cursor) {
-        cursor = result.response_metadata.next_cursor
-      } else {
-        break
-      }
-    }
-  } catch (error) {
-    console.error(`Error: ${error}`)
-    return null
-  }
-  cache.set('userList', allUsers)
-  return allUsers
 }
