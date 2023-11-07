@@ -1,8 +1,8 @@
 import { OpenAI } from 'openai'
 import { encoding_for_model, TiktokenModel } from '@dqbd/tiktoken'
-
+import axios from 'axios'
 import {
-  ChatCompletionMessageParam
+  ChatCompletionUserMessageParam
 } from 'openai/resources/chat'
 const apiKey = process.env.OPENAI_API_KEY as string
 if (!apiKey) {
@@ -10,22 +10,24 @@ if (!apiKey) {
 }
 const openai = new OpenAI({ apiKey })
 
-let MaxTokens = 8192
-if (process.env.OPENAI_MAX_TOKENS !== '') {
-  MaxTokens = parseInt(process.env.OPENAI_MAX_TOKENS, 10)
-}
-async function getNumberOfTokens (messages: ChatCompletionMessageParam[]): Promise<number> {
+const GPT_MODEL = 'gpt-4-1106-preview'
+
+const GPT_MAX_TOKEN = 128000
+
+async function getNumberOfTokens (messages: ChatCompletionUserMessageParam[]): Promise<number> {
   let length = 0
-  let model = 'gpt-4' as TiktokenModel
-  if (process.env.OPENAI_MODEL !== '') {
-    model = process.env.OPENAI_MODEL as TiktokenModel
-  }
+  const model = 'gpt-4' as TiktokenModel
 
   const encoding = encoding_for_model(model)
   for (const message of messages) {
     if (message.role === 'user') {
-      if (message.content instanceof String) {
-        length += encoding.encode(message.content as string).length
+      for (const content of message.content as any[]) {
+        console.log(content.text)
+        if (content.type === 'text') {
+          length += encoding.encode(content.text).length
+        } else if (content.type === 'image_url') {
+          length += 4096
+        }
       }
     }
   }
@@ -33,21 +35,41 @@ async function getNumberOfTokens (messages: ChatCompletionMessageParam[]): Promi
   return length
 }
 
-export async function ask (messages: ChatCompletionMessageParam[], model = 'gpt-4') {
-  if (process.env.OPENAI_MODEL !== '') {
-    model = process.env.OPENAI_MODEL as TiktokenModel
+export async function ask (messages: ChatCompletionUserMessageParam[], model: string = GPT_MODEL, max_tokens: number | null = null) {
+  const numberOfTokens = await getNumberOfTokens(messages)
+
+  if (numberOfTokens > GPT_MAX_TOKEN) {
+    return 'GPTの制限により、返答できませんでした。'
   }
+
+  console.log(model)
+  console.log('numberOfTokens', numberOfTokens)
+  console.dir(messages, { depth: null })
 
   const response = await openai.chat.completions.create({
     model,
-    messages
+    messages,
+    max_tokens
   })
-  /*
-  const numberOfTokens = await getNumberOfTokens(messages)
+  console.dir(response)
+  console.dir(response, { depth: null })
 
-  if (numberOfTokens > MaxTokens) {
-    return 'GPTの制限により、返答できませんでした。'
-  }
-*/
   return response.choices[0].message?.content
+}
+
+export async function downloadFileAsBase64 (url: string) {
+  try {
+    const response = await axios.get(url, {
+      responseType: 'arraybuffer',
+      headers: {
+        Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}`
+      }
+    })
+
+    const data: string = Buffer.from(response.data, 'binary').toString('base64')
+    return data
+  } catch (error) {
+    console.error('Error downloading file:', error)
+    return null
+  }
 }

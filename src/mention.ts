@@ -1,4 +1,4 @@
-import { ask } from './utils'
+import { ask, downloadFileAsBase64 } from './utils'
 
 export const appMention: any = async ({ event, client, say }) => {
   const channelId = event.channel
@@ -17,34 +17,47 @@ export const appMention: any = async ({ event, client, say }) => {
       return
     }
 
-    const waitingMessage = 'GPTに聞いています。しばらくお待ち下さい。'
-    await say({
-      text: waitingMessage,
-      thread_ts: event.ts
-    })
-
-    const preContext = [{
-      role: 'user',
-      content: 'これから質問をします。わからないときはわからないと答えてください。業務と関係なさそうであれば、解答の最後に、「この質問は業務と関係ないかもしれません」と追記してください。'
-    }]
-
     const nonNullable = <T>(value: T): value is NonNullable<T> => value != null
-    const threadMessages = replies.messages.map((message) => {
-      if (message.text.includes(waitingMessage)) {
-        return null
-      }
+    let model = 'gpt-4-1106-preview'
+    let max_tokens = null
+    const threadMessages = await Promise.all(
+      replies.messages.map(async (message) => {
+        if (message.user !== botUserId && !message.text.includes(`<@${botUserId}>`)) {
+          return null
+        }
 
-      if (message.user !== botUserId && !message.text.includes(`<@${botUserId}>`)) {
-        return null
-      }
+        const contents = []
 
-      return {
-        role: message.user === botUserId ? 'assistant' : 'user',
-        content: (message.text || '').replace(`<@${botUserId}>`, '')
-      }
-    }).filter(nonNullable)
+        if (message.files) {
+          for (const file of message.files) {
+            if ('url_private_download' in file) {
+              const encodedImage = await downloadFileAsBase64(file.url_private_download)
+              if (encodedImage) {
+                model = 'gpt-4-vision-preview'
+                max_tokens = 4096
+                contents.push(
+                  {
+                    image_url: {
+                      url: 'data:image/jpeg;base64,' + encodedImage,
+                      detail: 'auto'
+                    },
+                    type: 'image_url'
+                  }
+                )
+              }
+            }
+          }
+        }
 
-    const gptAnswerText = await ask(Object.assign(preContext, threadMessages))
+        contents.push({ text: (message.text || '').replace(`<@${botUserId}>`, ''), type: 'text' })
+        return {
+          role: message.user === botUserId ? 'assistant' : 'user',
+          content: contents
+        }
+      })
+    )
+
+    const gptAnswerText = await ask(threadMessages.filter(nonNullable), model, max_tokens)
 
     /* スレッドに返信 */
     await say({
