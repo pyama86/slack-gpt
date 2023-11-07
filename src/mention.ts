@@ -1,5 +1,4 @@
-import { ask, getUserList } from './utils'
-import { ChatCompletionRequestMessageRoleEnum } from 'openai'
+import { ask } from './utils'
 
 export const appMention: any = async ({ event, client, say }) => {
   const channelId = event.channel
@@ -25,7 +24,7 @@ export const appMention: any = async ({ event, client, say }) => {
     })
 
     const preContext = [{
-      role: ChatCompletionRequestMessageRoleEnum.User,
+      role: 'user',
       content: 'これから質問をします。わからないときはわからないと答えてください。業務と関係なさそうであれば、解答の最後に、「この質問は業務と関係ないかもしれません」と追記してください。'
     }]
 
@@ -40,7 +39,7 @@ export const appMention: any = async ({ event, client, say }) => {
       }
 
       return {
-        role: message.user === botUserId ? ChatCompletionRequestMessageRoleEnum.Assistant : ChatCompletionRequestMessageRoleEnum.User,
+        role: message.user === botUserId ? 'assistant' : 'user',
         content: (message.text || '').replace(`<@${botUserId}>`, '')
       }
     }).filter(nonNullable)

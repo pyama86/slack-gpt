@@ -1,5 +1,4 @@
 import { ask } from './utils'
-import { ChatCompletionRequestMessageRoleEnum } from 'openai'
 
 export function shortcutQuery (app) {
   return async ({
@@ -29,11 +28,11 @@ export function shortcutQuery (app) {
     logger.info('query keyword:', txt)
     const result = await ask([
       {
-        role: ChatCompletionRequestMessageRoleEnum.User,
+        role: 'user',
         content: 'これから質問をします。わからないときはわからないと答えてください'
       },
       {
-        role: ChatCompletionRequestMessageRoleEnum.User,
+        role: 'user',
         content: txt
       }])
 
