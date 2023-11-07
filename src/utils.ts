@@ -42,12 +42,12 @@ export async function ask (messages: ChatCompletionMessageParam[], model = 'gpt-
     model,
     messages
   })
-
+  /*
   const numberOfTokens = await getNumberOfTokens(messages)
 
   if (numberOfTokens > MaxTokens) {
     return 'GPTの制限により、返答できませんでした。'
   }
-
+*/
   return response.choices[0].message?.content
 }
