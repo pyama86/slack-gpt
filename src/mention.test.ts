@@ -53,8 +53,8 @@ describe('appMention', () => {
       ts: 'test_thread_ts'
     })
 
-    expect(mockSay).toHaveBeenCalledTimes(2)
-    expect(mockSay).toHaveBeenNthCalledWith(2, {
+    expect(mockSay).toHaveBeenCalledTimes(1)
+    expect(mockSay).toHaveBeenNthCalledWith(1, {
       text: 'GPTの回答',
       thread_ts: 'test_ts'
     })
