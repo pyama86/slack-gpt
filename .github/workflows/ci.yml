@@ -11,7 +11,9 @@ on:
 jobs:
   test_and_lint:
     runs-on: ubuntu-latest
-
+    env:
+      OPENAI_API_KEY: "dummy"
+      OPENAI_MAX_TOKENS: 1000
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
