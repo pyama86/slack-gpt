@@ -1,6 +1,5 @@
 import { App } from '@slack/bolt'
 import { shortcutQuery } from './shortcut'
-import { ChatCompletionRequestMessageRoleEnum } from 'openai'
 import { WebClient } from '@slack/web-api'
 import { ask } from './utils'
 
@@ -51,11 +50,11 @@ describe('shortcutQuery', () => {
     expect(mockAck).toHaveBeenCalled()
     expect(mockAsk).toHaveBeenCalledWith([
       {
-        role: ChatCompletionRequestMessageRoleEnum.User,
+        role: 'user',
         content: 'これから質問をします。わからないときはわからないと答えてください'
       },
       {
-        role: ChatCompletionRequestMessageRoleEnum.User,
+        role: 'user',
         content: messageText + inputText
       }
     ])
