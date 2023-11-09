@@ -32,13 +32,18 @@ export const appMention: any = async ({ event, client, say }) => {
           for (const file of message.files) {
             if ('url_private_download' in file) {
               const encodedImage = await downloadFileAsBase64(file.url_private_download)
+              let filetype = file.filetype
+              if (filetype === 'jpg') {
+                filetype = 'jpeg'
+              }
+
               if (encodedImage) {
                 model = 'gpt-4-vision-preview'
                 max_tokens = 4096
                 contents.push(
                   {
                     image_url: {
-                      url: 'data:image/jpeg;base64,' + encodedImage,
+                      url: 'data:image/' + filetype + ';base64,' + encodedImage,
                       detail: 'auto'
                     },
                     type: 'image_url'
