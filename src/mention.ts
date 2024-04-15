@@ -18,7 +18,7 @@ export const appMention: any = async ({ event, client, say }) => {
     }
 
     const nonNullable = <T>(value: T): value is NonNullable<T> => value != null
-    let model = 'gpt-4-1106-preview'
+    let model = 'gpt-4-turbo'
     let max_tokens = null
     const threadMessages = await Promise.all(
       replies.messages.map(async (message) => {
