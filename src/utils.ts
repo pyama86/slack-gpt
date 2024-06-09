@@ -10,7 +10,7 @@ if (!apiKey) {
 }
 const openai = new OpenAI({ apiKey })
 
-const GPT_MODEL = 'gpt-4-1106-preview'
+const GPT_MODEL = process.env.GPT_MODEL || 'gpt-4-turbo'
 
 const GPT_MAX_TOKEN = 128000
 
