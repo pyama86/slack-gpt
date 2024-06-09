@@ -45,6 +45,8 @@ spec:
               secretKeyRef:
                 name: slack-gpt
                 key: openai-secret
+          - name: GPT_MODEL
+            value: gpt-4o
           - name: LANG
             value: C.UTF-8
           - name: BOT_USER_ID
