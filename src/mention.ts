@@ -31,7 +31,10 @@ export const appMention: any = async ({ event, client, say }) => {
       aiInstructionMessage,
       ...(await Promise.all(
         replies.messages.map(async (message) => {
-          if (!isSummaryRequest && message.user !== botUserId && !message.text.includes(`<@${botUserId}>`)) {
+          if (
+            (!isSummaryRequest && message.user !== botUserId && !message.text.includes(`<@${botUserId}>`)) ||
+              (isSummaryRequest && message.text.includes('今北産業'))
+          ) {
             return null
           }
 
