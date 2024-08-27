@@ -114,7 +114,8 @@ describe('appMention', () => {
     expect(mockSay).toHaveBeenCalledTimes(1)
     expect(mockSay).toHaveBeenNthCalledWith(1, {
       text: 'サマリの内容',
-      thread_ts: 'test_ts'
+      thread_ts: 'test_ts',
+      type: 'mrkdwn'
     })
   })
 })

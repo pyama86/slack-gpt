@@ -97,7 +97,6 @@ export async function generateSummary (messages: ChatCompletionUserMessageParam[
   3. 重要な内容については抜け漏れなく記載する
   4. あとから見た人がすぐに状況を把握できるようにする
   5. 最初に、「AIによるサマリ」と明記する
-  6. 段落などのフォーマットはマークダウンではなく、Slackの太字や斜体を利用してください
 
   ---スレッドの内容---
   ${allMessages}

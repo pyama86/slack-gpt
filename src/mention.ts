@@ -64,7 +64,8 @@ export const appMention: any = async ({ event, client, say }) => {
       const summary = await generateSummary(threadMessages.filter(nonNullable), model, max_tokens)
       await say({
         text: summary,
-        thread_ts: event.ts
+        thread_ts: event.ts,
+        type: 'mrkdwn'
       })
       return
     }
