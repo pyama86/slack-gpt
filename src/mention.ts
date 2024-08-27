@@ -70,22 +70,23 @@ export const appMention: any = async ({ event, client, say }) => {
       ))
     ]
 
+    let answer = ''
     if (isSummaryRequest) {
-      const summary = await generateSummary(threadMessages.filter(nonNullable), model, max_tokens)
-      await say({
-        text: summary,
-        thread_ts: event.ts,
-        type: 'mrkdwn'
-      })
-      return
+      answer = await generateSummary(threadMessages.filter(nonNullable), model, max_tokens)
+    } else {
+      answer = await ask(threadMessages.filter(nonNullable), model, max_tokens)
     }
 
-    const gptAnswerText = await ask(threadMessages.filter(nonNullable), model, max_tokens)
-
     await say({
-      text: gptAnswerText,
-      thread_ts: event.ts,
-      type: 'mrkdwn'
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: answer
+          }
+        }
+      ]
     })
   } catch (error) {
     console.error(error)
