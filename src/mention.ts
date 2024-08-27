@@ -78,6 +78,8 @@ export const appMention: any = async ({ event, client, say }) => {
     }
 
     await say({
+      thread_ts: event.ts,
+      text: 'GPTの回答',
       blocks: [
         {
           type: 'section',

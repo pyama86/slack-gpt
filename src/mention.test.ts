@@ -67,7 +67,9 @@ describe('appMention', () => {
             text: 'GPTの回答'
           }
         }
-      ]
+      ],
+      text: 'GPTの回答',
+      thread_ts: 'test_ts'
     })
   })
 
@@ -133,7 +135,9 @@ describe('appMention', () => {
             text: 'サマリの内容'
           }
         }
-      ]
+      ],
+      text: 'GPTの回答',
+      thread_ts: 'test_ts'
     })
   })
 })
