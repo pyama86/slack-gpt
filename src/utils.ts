@@ -73,3 +73,40 @@ export async function downloadFileAsBase64 (url: string) {
     return null
   }
 }
+
+export async function generateSummary (messages: ChatCompletionUserMessageParam[], model: string = GPT_MODEL, max_tokens: number | null = null) {
+  const allMessages = messages
+    .map(message => {
+      if (typeof message.content === 'string') {
+        return message.content
+      } else {
+        return message.content
+          .map(content => {
+            if ('text' in content) {
+              return content.text
+            } else {
+              return ''
+            }
+          })
+          .join('')
+      }
+    })
+    .join('\n')
+
+  const summaryPrompt = `
+  次の内容を要約し、以下の要件を満たしたサマリを作成してください。
+
+  1. 最初に3行で全体の内容を要約する、その後に詳細な内容を記載する
+  2. 納期やスケジュールについては明確に記載する
+  3. 重要な内容については抜け漏れなく記載する
+  4. あとから見た人がすぐに状況を把握できるようにする
+
+  ---スレッドの内容---
+  ${allMessages}
+
+  ---サマリ---
+  `
+  const summary = await ask([{ role: 'user', content: [{ type: 'text', text: summaryPrompt }] }], model, max_tokens)
+
+  return summary
+}

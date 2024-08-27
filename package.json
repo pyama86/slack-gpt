@@ -36,7 +36,7 @@
   },
   "scripts": {
     "lint": "eslint src --ext .ts",
-    "test": "jest",
+    "test": "OPENAI_API_KEY=dummy_api_key jest",
     "start": "npm run build:live",
     "build": "tsc -p .",
     "build:live": "nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/index.ts"

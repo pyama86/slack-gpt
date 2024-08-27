@@ -1,4 +1,4 @@
-import { ask, downloadFileAsBase64 } from './utils'
+import { ask, downloadFileAsBase64, generateSummary } from './utils'
 
 export const appMention: any = async ({ event, client, say }) => {
   const channelId = event.channel
@@ -10,19 +10,19 @@ export const appMention: any = async ({ event, client, say }) => {
     })
 
     if (!replies.messages) {
-      await say(
-        'スレッドが見つかりませんでした'
-      )
-
+      await say('スレッドが見つかりませんでした')
       return
     }
 
     const nonNullable = <T>(value: T): value is NonNullable<T> => value != null
-    let model = process.env.GPT_MODEL || 'gpt-4-turbo'
+    let model = process.env.GPT_MODEL || 'gpt-4o'
     let max_tokens = null
+
+    const isSummaryRequest = event.text.includes('今北産業')
+
     const threadMessages = await Promise.all(
       replies.messages.map(async (message) => {
-        if (message.user !== botUserId && !message.text.includes(`<@${botUserId}>`)) {
+        if (!isSummaryRequest && message.user !== botUserId && !message.text.includes(`<@${botUserId}>`)) {
           return null
         }
 
@@ -38,17 +38,15 @@ export const appMention: any = async ({ event, client, say }) => {
               }
 
               if (encodedImage) {
-                model = 'gpt-4-vision-preview'
+                model = 'gpt-4o'
                 max_tokens = 4096
-                contents.push(
-                  {
-                    image_url: {
-                      url: 'data:image/' + filetype + ';base64,' + encodedImage,
-                      detail: 'auto'
-                    },
-                    type: 'image_url'
-                  }
-                )
+                contents.push({
+                  image_url: {
+                    url: 'data:image/' + filetype + ';base64,' + encodedImage,
+                    detail: 'auto'
+                  },
+                  type: 'image_url'
+                })
               }
             }
           }
@@ -62,9 +60,17 @@ export const appMention: any = async ({ event, client, say }) => {
       })
     )
 
+    if (isSummaryRequest) {
+      const summary = await generateSummary(threadMessages.filter(nonNullable), model, max_tokens)
+      await say({
+        text: summary,
+        thread_ts: event.ts
+      })
+      return
+    }
+
     const gptAnswerText = await ask(threadMessages.filter(nonNullable), model, max_tokens)
 
-    /* スレッドに返信 */
     await say({
       text: gptAnswerText,
       thread_ts: event.ts
