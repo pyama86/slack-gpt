@@ -59,15 +59,7 @@ describe('appMention', () => {
     expect(mockSay).toHaveBeenCalledTimes(1)
 
     expect(mockSay).toHaveBeenNthCalledWith(1, {
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: 'GPTの回答'
-          }
-        }
-      ],
+      type: 'mrkdwn',
       text: 'GPTの回答',
       thread_ts: 'test_ts'
     })
@@ -127,16 +119,8 @@ describe('appMention', () => {
 
     expect(mockSay).toHaveBeenCalledTimes(1)
     expect(mockSay).toHaveBeenNthCalledWith(1, {
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: 'サマリの内容'
-          }
-        }
-      ],
-      text: 'GPTの回答',
+      type: 'mrkdwn',
+      text: 'サマリの内容',
       thread_ts: 'test_ts'
     })
   })
