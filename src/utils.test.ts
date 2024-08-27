@@ -1,5 +1,5 @@
 import { OpenAI } from 'openai'
-import { ask, generateSummary } from './utils'
+import { generateSummary } from './utils'
 
 jest.mock('openai', () => {
   const createMock = jest.fn().mockResolvedValue({
