@@ -22,7 +22,6 @@ async function getNumberOfTokens (messages: ChatCompletionUserMessageParam[]): P
   for (const message of messages) {
     if (message.role === 'user') {
       for (const content of message.content as any[]) {
-        console.log(content.text)
         if (content.type === 'text') {
           length += encoding.encode(content.text).length
         } else if (content.type === 'image_url') {
@@ -44,15 +43,12 @@ export async function ask (messages: ChatCompletionUserMessageParam[], model: st
 
   console.log(model)
   console.log('numberOfTokens', numberOfTokens)
-  console.dir(messages, { depth: null })
 
   const response = await openai.chat.completions.create({
     model,
     messages,
     max_tokens
   })
-  console.dir(response)
-  console.dir(response, { depth: null })
 
   return response.choices[0].message?.content
 }
