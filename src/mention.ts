@@ -20,45 +20,55 @@ export const appMention: any = async ({ event, client, say }) => {
 
     const isSummaryRequest = event.text.includes('今北産業')
 
-    const threadMessages = await Promise.all(
-      replies.messages.map(async (message) => {
-        if (!isSummaryRequest && message.user !== botUserId && !message.text.includes(`<@${botUserId}>`)) {
-          return null
-        }
+    const aiInstructionMessage = {
+      role: 'system',
+      content: [
+        { text: '応答はマークダウンで行ってください。', type: 'text' }
+      ]
+    }
 
-        const contents = []
+    const threadMessages = [
+      aiInstructionMessage,
+      ...(await Promise.all(
+        replies.messages.map(async (message) => {
+          if (!isSummaryRequest && message.user !== botUserId && !message.text.includes(`<@${botUserId}>`)) {
+            return null
+          }
 
-        if (message.files) {
-          for (const file of message.files) {
-            if ('url_private_download' in file) {
-              const encodedImage = await downloadFileAsBase64(file.url_private_download)
-              let filetype = file.filetype
-              if (filetype === 'jpg') {
-                filetype = 'jpeg'
-              }
+          const contents = []
 
-              if (encodedImage) {
-                model = 'gpt-4o'
-                max_tokens = 4096
-                contents.push({
-                  image_url: {
-                    url: 'data:image/' + filetype + ';base64,' + encodedImage,
-                    detail: 'auto'
-                  },
-                  type: 'image_url'
-                })
+          if (message.files) {
+            for (const file of message.files) {
+              if ('url_private_download' in file) {
+                const encodedImage = await downloadFileAsBase64(file.url_private_download)
+                let filetype = file.filetype
+                if (filetype === 'jpg') {
+                  filetype = 'jpeg'
+                }
+
+                if (encodedImage) {
+                  model = 'gpt-4o'
+                  max_tokens = 4096
+                  contents.push({
+                    image_url: {
+                      url: 'data:image/' + filetype + ';base64,' + encodedImage,
+                      detail: 'auto'
+                    },
+                    type: 'image_url'
+                  })
+                }
               }
             }
           }
-        }
 
-        contents.push({ text: (message.text || '').replace(`<@${botUserId}>`, ''), type: 'text' })
-        return {
-          role: message.user === botUserId ? 'assistant' : 'user',
-          content: contents
-        }
-      })
-    )
+          contents.push({ text: (message.text || '').replace(`<@${botUserId}>`, ''), type: 'text' })
+          return {
+            role: message.user === botUserId ? 'assistant' : 'user',
+            content: contents
+          }
+        })
+      ))
+    ]
 
     if (isSummaryRequest) {
       const summary = await generateSummary(threadMessages.filter(nonNullable), model, max_tokens)
@@ -74,7 +84,8 @@ export const appMention: any = async ({ event, client, say }) => {
 
     await say({
       text: gptAnswerText,
-      thread_ts: event.ts
+      thread_ts: event.ts,
+      type: 'mrkdwn'
     })
   } catch (error) {
     console.error(error)

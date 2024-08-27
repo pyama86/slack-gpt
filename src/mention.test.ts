@@ -59,7 +59,8 @@ describe('appMention', () => {
     expect(mockSay).toHaveBeenCalledTimes(1)
     expect(mockSay).toHaveBeenNthCalledWith(1, {
       text: 'GPTの回答',
-      thread_ts: 'test_ts'
+      thread_ts: 'test_ts',
+      type: 'mrkdwn'
     })
   })
 
@@ -98,6 +99,10 @@ describe('appMention', () => {
 
     expect(generateSummary).toHaveBeenCalledWith(
       [
+        {
+          role: 'system',
+          content: [{ text: '応答はマークダウンで行ってください。', type: 'text' }]
+        },
         {
           role: 'user',
           content: [{ text: 'test message 1', type: 'text' }]
