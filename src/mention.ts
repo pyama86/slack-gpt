@@ -50,7 +50,7 @@ export const appMention: any = async ({ event, client, say }) => {
                 }
 
                 if (encodedImage) {
-                  model = 'gpt-4o'
+                  model = process.env.IMAGE_MODEL || 'gpt-4o'
                   max_tokens = 4096
                   contents.push({
                     image_url: {

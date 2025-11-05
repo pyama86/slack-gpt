@@ -12,11 +12,11 @@ const openai = new OpenAI({ apiKey })
 
 const GPT_MODEL = process.env.GPT_MODEL || 'gpt-4-turbo'
 
-const GPT_MAX_TOKEN = 128000
+const GPT_MAX_TOKEN = Number(process.env.GPT_MAX_TOKEN || '128000')
 
 async function getNumberOfTokens (messages: ChatCompletionUserMessageParam[]): Promise<number> {
   let length = 0
-  const model = 'gpt-4' as TiktokenModel
+  const model = (process.env.TIKTOKEN_MODEL || 'gpt-4') as TiktokenModel
 
   const encoding = encoding_for_model(model)
   for (const message of messages) {
